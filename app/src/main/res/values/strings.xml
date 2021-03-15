@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">AutoShowroom</string>
+    <string name="maker">Maker</string>
+    <string name="model">Model</string>
+    <string name="app_title">CarsApp (Kee Pei Jiin)</string>
+    <string name="year">Year</string>
+    <string name="color">Color</string>
+    <string name="seats">Seats</string>
+    <string name="price">Price</string>
+    <string name="add_new_car">Add New Car</string>
+    <string name="a_car_image">A car image</string>
+    <string name="address">Address</string>
+    <string name="reset_all">Reset All</string>
+</resources>
