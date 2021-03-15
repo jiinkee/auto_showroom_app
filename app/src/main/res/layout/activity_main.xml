@@ -150,9 +150,12 @@
             android:id="@+id/btnAddNewCar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="48dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
+            android:layout_marginEnd="4dp"
             android:text="@string/add_new_car"
+            app:layout_constraintEnd_toStartOf="@+id/btnReset"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editAddress" />
 
@@ -193,11 +196,23 @@
             android:id="@+id/btnReset"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
             android:text="@string/reset_all"
             app:layout_constraintBaseline_toBaselineOf="@+id/btnAddNewCar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.447"
+            app:layout_constraintEnd_toStartOf="@+id/btnClear"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/btnAddNewCar" />
+
+        <Button
+            android:id="@+id/btnClear"
+            android:layout_width="114dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:text="@string/clear_all"
+            app:layout_constraintBaseline_toBaselineOf="@+id/btnReset"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/btnReset" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </android.widget.ScrollView>

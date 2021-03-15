@@ -10,18 +10,13 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private EditText makerEditText;
-    private EditText modelEditText;
-    private EditText yearEditText;
-    private EditText colorEditText;
-    private EditText seatEditText;
-    private EditText priceEditText;
-    private EditText addressEditText;
+    private EditText makerEditText, modelEditText, yearEditText, colorEditText, seatEditText, priceEditText, addressEditText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,23 +25,74 @@ public class MainActivity extends AppCompatActivity {
 
         getAllEditTexts();
 
+        // add car to showroom and save car details to SharedPreferences
         Button button = findViewById(R.id.btnAddNewCar);
         button.setOnClickListener(new addNewCarButtonListener());
 
+        // wipe off data in EditTexts
         Button resetBtn = findViewById(R.id.btnReset);
         resetBtn.setOnClickListener(new resetButtonListener());
+
+        // wipe off data in EditTexts and SharedPreferences
+        Button clearBtn = findViewById(R.id.btnClear);
+        clearBtn.setOnClickListener(new clearButtonListener());
     }
 
     @Override
-    protected void onStart(){
+    protected void onStart() {
         restoreSharedPreferences();
         super.onStart();
     }
 
-    @Override
-    protected void onPause(){
-        saveSharedPreferences();
-        super.onPause();
+    private void getAllEditTexts() {
+        makerEditText = findViewById(R.id.editMaker);
+        modelEditText = findViewById(R.id.editModel);
+        yearEditText = findViewById(R.id.editYear);
+        colorEditText = findViewById(R.id.editColor);
+        seatEditText = findViewById(R.id.editSeat);
+        priceEditText = findViewById(R.id.editPrice);
+        addressEditText = findViewById(R.id.editAddress);
+    }
+
+    private void clearAllEditTexts() {
+        makerEditText.getText().clear();
+        modelEditText.getText().clear();
+        yearEditText.getText().clear();
+        colorEditText.getText().clear();
+        seatEditText.getText().clear();
+        priceEditText.getText().clear();
+        addressEditText.getText().clear();
+    }
+
+    private class addNewCarButtonListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            // hide keyboard
+            InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+            // show toaster
+            String makerInput = makerEditText.getText().toString();
+            Toast.makeText(MainActivity.this, "We added a new car (" + makerInput + ")", Toast.LENGTH_SHORT).show();
+
+            // save user inputs into SharedPreferences file
+            saveSharedPreferences();
+        }
+    }
+
+    private class resetButtonListener implements View.OnClickListener {
+        @Override
+        public void onClick(View view) {
+            clearAllEditTexts();
+        }
+    }
+
+    private class clearButtonListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            clearAllEditTexts();
+            clearSharedPreferences();
+        }
     }
 
     private void saveSharedPreferences() {
@@ -61,7 +107,7 @@ public class MainActivity extends AppCompatActivity {
         editor.putString(getString(R.string.price), priceEditText.getText().toString());
         editor.putString(getString(R.string.address), addressEditText.getText().toString());
 
-        editor.commit();
+        editor.apply();
     }
 
     private void restoreSharedPreferences() {
@@ -89,42 +135,11 @@ public class MainActivity extends AppCompatActivity {
         addressEditText.setText(lastAddress);
     }
 
-    private void getAllEditTexts() {
-        makerEditText = findViewById(R.id.editMaker);
-        modelEditText = findViewById(R.id.editModel);
-        yearEditText = findViewById(R.id.editYear);
-        colorEditText = findViewById(R.id.editColor);
-        seatEditText = findViewById(R.id.editSeat);
-        priceEditText = findViewById(R.id.editPrice);
-        addressEditText = findViewById(R.id.editAddress);
-    }
+    private void clearSharedPreferences() {
+        SharedPreferences persistentLastCar = getPreferences(0);
+        SharedPreferences.Editor editor = persistentLastCar.edit();
 
-
-    private class addNewCarButtonListener implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            // hide keyboard
-            InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-
-            // show toaster
-            String makerInput = makerEditText.getText().toString();
-            Toast.makeText(MainActivity.this, "We added a new car (" + makerInput + ")", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    private class resetButtonListener implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            // reset all input
-            makerEditText.getText().clear();
-            modelEditText.getText().clear();
-            yearEditText.getText().clear();
-            colorEditText.getText().clear();
-            seatEditText.getText().clear();
-            priceEditText.getText().clear();
-            addressEditText.getText().clear();
-
-        }
+        editor.clear();
+        editor.apply();
     }
 }

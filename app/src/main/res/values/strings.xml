@@ -11,4 +11,5 @@
     <string name="a_car_image">A car image</string>
     <string name="address">Address</string>
     <string name="reset_all">Reset All</string>
+    <string name="clear_all">Clear All</string>
 </resources>
