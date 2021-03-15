@@ -152,15 +152,13 @@
 
     <ImageView
         android:id="@+id/imageView2"
-        android:layout_width="411dp"
-        android:layout_height="225dp"
-        android:layout_marginTop="7dp"
+        android:layout_width="401dp"
+        android:layout_height="169dp"
         android:contentDescription="@string/a_car_image"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.523"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnAddNewCar"
         app:layout_constraintVertical_bias="1.0"
         app:srcCompat="@mipmap/colored_car_foreground" />
 
@@ -170,10 +168,10 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="@string/address"
+        android:importantForAutofill="no"
         android:inputType="textPersonName"
         app:layout_constraintBaseline_toBaselineOf="@+id/addressLabel"
-        app:layout_constraintStart_toStartOf="@+id/editPrice"
-        android:importantForAutofill="no" />
+        app:layout_constraintStart_toStartOf="@+id/editPrice" />
 
     <TextView
         android:id="@+id/addressLabel"
