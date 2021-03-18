@@ -14,6 +14,9 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     private EditText makerEditText, modelEditText, yearEditText, colorEditText, seatEditText, priceEditText, addressEditText;
 
+    private final static int NULL_INT_INPUT = -1;
+    private final static float NULL_FLOAT_INPUT = -1;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,10 +100,10 @@ public class MainActivity extends AppCompatActivity {
 
         editor.putString(getString(R.string.maker), makerEditText.getText().toString());
         editor.putString(getString(R.string.model), modelEditText.getText().toString());
-        editor.putString(getString(R.string.year), yearEditText.getText().toString());
+        editor.putInt(getString(R.string.year), Integer.parseInt(yearEditText.getText().toString()));
         editor.putString(getString(R.string.color), colorEditText.getText().toString());
-        editor.putString(getString(R.string.seats), seatEditText.getText().toString());
-        editor.putString(getString(R.string.price), priceEditText.getText().toString());
+        editor.putInt(getString(R.string.seats), Integer.parseInt(seatEditText.getText().toString()));
+        editor.putFloat(getString(R.string.price), Float.parseFloat(priceEditText.getText().toString()));
         editor.putString(getString(R.string.address), addressEditText.getText().toString());
 
         editor.apply();
@@ -115,20 +118,26 @@ public class MainActivity extends AppCompatActivity {
         String lastModel = persistentLastCar.getString(getString(R.string.model), "");
         modelEditText.setText(lastModel);
 
-        String lastYear = persistentLastCar.getString(getString(R.string.year), "");
-        yearEditText.setText(lastYear);
+        String lastYear = Integer.toString(persistentLastCar.getInt(getString(R.string.year), NULL_INT_INPUT));
+        yearEditText.setText(validateInput(lastYear));
 
         String lastColor = persistentLastCar.getString(getString(R.string.color), "");
         colorEditText.setText(lastColor);
 
-        String lastSeat = persistentLastCar.getString(getString(R.string.seats), "");
-        seatEditText.setText(lastSeat);
+        String lastSeat = Integer.toString(persistentLastCar.getInt(getString(R.string.seats), NULL_INT_INPUT));
+        seatEditText.setText(validateInput(lastSeat));
 
-        String lastPrice = persistentLastCar.getString(getString(R.string.price), "");
-        priceEditText.setText(lastPrice);
+        String lastPrice = Float.toString(persistentLastCar.getFloat(getString(R.string.price), NULL_FLOAT_INPUT));
+        priceEditText.setText(validateInput(lastPrice));
 
         String lastAddress = persistentLastCar.getString(getString(R.string.address), "");
         addressEditText.setText(lastAddress);
+    }
+
+    private String validateInput(String userInput) {
+        return (userInput.equals(Integer.toString(NULL_INT_INPUT)) || userInput.equals(Float.toString(NULL_FLOAT_INPUT)))
+                ? ""
+                : userInput;
     }
 
     private void clearSharedPreferences() {
