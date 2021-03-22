@@ -1,8 +1,13 @@
 package com.example.autoshowroom;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -10,6 +15,8 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity {
     private EditText makerEditText, modelEditText, yearEditText, colorEditText, seatEditText, priceEditText;
@@ -31,6 +38,38 @@ public class MainActivity extends AppCompatActivity {
         // wipe off data in EditTexts and SharedPreferences
         Button clearBtn = findViewById(R.id.btnClear);
         clearBtn.setOnClickListener(new clearButtonListener());
+
+        // Request permissions to access SMS
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS,
+        Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS}, 0);
+
+        // register broadcast receiver to tokenize an display values in SMS
+        IntentFilter smsTokenizeIntentFilter = new IntentFilter(SMSReceiver.SMS_TOKENIZE);
+        BroadcastReceiver smsTokenizeReceiver = new SMSTokenizeReceiver();
+        registerReceiver(smsTokenizeReceiver, smsTokenizeIntentFilter);
+
+    }
+
+    class SMSTokenizeReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String msg = intent.getStringExtra(SMSReceiver.SMS_MSG);
+
+            StringTokenizer tokenizer = new StringTokenizer(msg, ";");
+            String maker = tokenizer.nextToken();
+            String model = tokenizer.nextToken();
+            String year = tokenizer.nextToken();
+            String colour = tokenizer.nextToken();
+            String seats = tokenizer.nextToken();
+            String price = tokenizer.nextToken();
+
+            makerEditText.setText(maker);
+            modelEditText.setText(model);
+            yearEditText.setText(year);
+            colorEditText.setText(colour);
+            seatEditText.setText(seats);
+            priceEditText.setText(price);
+        }
     }
 
     @Override
@@ -72,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
             saveSharedPreferences();
         }
     }
-
 
     private class clearButtonListener implements View.OnClickListener {
         @Override
