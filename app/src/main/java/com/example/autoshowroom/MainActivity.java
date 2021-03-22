@@ -12,7 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
-    private EditText makerEditText, modelEditText, yearEditText, colorEditText, seatEditText, priceEditText, addressEditText;
+    private EditText makerEditText, modelEditText, yearEditText, colorEditText, seatEditText, priceEditText;
 
     private final static int NULL_INT_INPUT = -1;
     private final static float NULL_FLOAT_INPUT = -1;
@@ -27,10 +27,6 @@ public class MainActivity extends AppCompatActivity {
         // add car to showroom and save car details to SharedPreferences
         Button button = findViewById(R.id.btnAddNewCar);
         button.setOnClickListener(new addNewCarButtonListener());
-
-        // wipe off data in EditTexts
-        Button resetBtn = findViewById(R.id.btnReset);
-        resetBtn.setOnClickListener(new resetButtonListener());
 
         // wipe off data in EditTexts and SharedPreferences
         Button clearBtn = findViewById(R.id.btnClear);
@@ -50,7 +46,6 @@ public class MainActivity extends AppCompatActivity {
         colorEditText = findViewById(R.id.editColor);
         seatEditText = findViewById(R.id.editSeat);
         priceEditText = findViewById(R.id.editPrice);
-        addressEditText = findViewById(R.id.editAddress);
     }
 
     private void clearAllEditTexts() {
@@ -60,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
         colorEditText.getText().clear();
         seatEditText.getText().clear();
         priceEditText.getText().clear();
-        addressEditText.getText().clear();
     }
 
     private class addNewCarButtonListener implements View.OnClickListener {
@@ -79,12 +73,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private class resetButtonListener implements View.OnClickListener {
-        @Override
-        public void onClick(View view) {
-            clearAllEditTexts();
-        }
-    }
 
     private class clearButtonListener implements View.OnClickListener {
         @Override
@@ -104,7 +92,6 @@ public class MainActivity extends AppCompatActivity {
         editor.putString(getString(R.string.color), colorEditText.getText().toString());
         editor.putInt(getString(R.string.seats), Integer.parseInt(seatEditText.getText().toString()));
         editor.putFloat(getString(R.string.price), Float.parseFloat(priceEditText.getText().toString()));
-        editor.putString(getString(R.string.address), addressEditText.getText().toString());
 
         editor.apply();
     }
@@ -129,9 +116,6 @@ public class MainActivity extends AppCompatActivity {
 
         String lastPrice = Float.toString(persistentLastCar.getFloat(getString(R.string.price), NULL_FLOAT_INPUT));
         priceEditText.setText(validateInput(lastPrice));
-
-        String lastAddress = persistentLastCar.getString(getString(R.string.address), "");
-        addressEditText.setText(lastAddress);
     }
 
     private String validateInput(String userInput) {
