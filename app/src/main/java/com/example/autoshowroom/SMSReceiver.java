@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.provider.Telephony;
 import android.telephony.SmsMessage;
+import android.widget.Toast;
 
 public class SMSReceiver extends BroadcastReceiver {
     public static final String SMS_TOKENIZE = "SMS_TOKENIZE";
@@ -15,6 +16,9 @@ public class SMSReceiver extends BroadcastReceiver {
         SmsMessage[] messages = Telephony.Sms.Intents.getMessagesFromIntent(intent);
         for (SmsMessage message : messages) {
             String msg = message.getDisplayMessageBody();
+
+            // show message content in toast
+            Toast.makeText(context, msg, Toast.LENGTH_SHORT).show();
 
             // broadcast message to be tokenized
             Intent tokenMsgIntent = new Intent();
