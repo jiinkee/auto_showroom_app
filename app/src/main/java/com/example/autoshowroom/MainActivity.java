@@ -1,7 +1,12 @@
 package com.example.autoshowroom;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -10,16 +15,25 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity {
     private EditText makerEditText, modelEditText, yearEditText, colorEditText, seatEditText, priceEditText;
+    private DrawerLayout drawer;
+    ArrayList<String> cars = new ArrayList<>();
+    ArrayAdapter<String> carListAdapter;
 
     private final static int NULL_INT_INPUT = -1;
     private final static float NULL_FLOAT_INPUT = -1;
@@ -27,17 +41,36 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.drawer_layout);
 
         getAllEditTexts();
 
-        // add car to showroom and save car details to SharedPreferences
-        Button button = findViewById(R.id.btnAddNewCar);
-        button.setOnClickListener(new addNewCarButtonListener());
+        // add my own toolbar
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        // wipe off data in EditTexts and SharedPreferences
-        Button clearBtn = findViewById(R.id.btnClear);
-        clearBtn.setOnClickListener(new clearButtonListener());
+        // add navigation drawer & toggle menu
+        drawer = findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
+                R.string.open_drawer, R.string.close_drawer);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+        NavigationView navView = findViewById(R.id.nav_view);
+        navView.setNavigationItemSelectedListener(new NavMenuListener());
+
+        // add FAB
+        FloatingActionButton fab = findViewById(R.id.floatingActionButton);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addNewCar();
+            }
+        });
+
+        // bind list view with its data source using adapter
+        ListView carList = findViewById(R.id.listView);
+        carListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, cars);
+        carList.setAdapter(carListAdapter);
 
         // Request permissions to access SMS
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS,
@@ -50,32 +83,61 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    class SMSTokenizeReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String msg = intent.getStringExtra(SMSReceiver.SMS_MSG);
-
-            StringTokenizer tokenizer = new StringTokenizer(msg, ";");
-            String maker = tokenizer.nextToken();
-            String model = tokenizer.nextToken();
-            String year = tokenizer.nextToken();
-            String colour = tokenizer.nextToken();
-            String seats = tokenizer.nextToken();
-            String price = tokenizer.nextToken();
-
-            makerEditText.setText(maker);
-            modelEditText.setText(model);
-            yearEditText.setText(year);
-            colorEditText.setText(colour);
-            seatEditText.setText(seats);
-            priceEditText.setText(price);
-        }
-    }
-
     @Override
     protected void onStart() {
         restoreSharedPreferences();
         super.onStart();
+    }
+
+    class NavMenuListener implements NavigationView.OnNavigationItemSelectedListener {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            int id = item.getItemId();
+            switch (id) {
+                case R.id.add_car:
+                    addNewCar();
+                    break;
+                case R.id.remove_last:
+                    if (cars.size() > 0) {
+                        cars.remove(cars.size() - 1);
+                        carListAdapter.notifyDataSetChanged();
+                    }
+                    break;
+                case R.id.remove_all:
+                    cars.clear();
+                    carListAdapter.notifyDataSetChanged();
+                    break;
+            }
+            drawer.closeDrawer(GravityCompat.START);
+            return true;
+        }
+    }
+
+    private void addNewCar() {
+        // hide keyboard
+        InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+        inputManager.hideSoftInputFromWindow(findViewById(android.R.id.content).getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+
+        // show toaster
+        String makerInput = makerEditText.getText().toString();
+        Toast.makeText(MainActivity.this, "A new car from " + makerInput + " added", Toast.LENGTH_SHORT).show();
+
+        // save user inputs into SharedPreferences file
+        saveSharedPreferences();
+
+        // add car details to car list
+        cars.add(makerEditText.getText().toString() + " | " + modelEditText.getText().toString());
+        carListAdapter.notifyDataSetChanged();
+
+    }
+
+    // options menu
+    private class clearButtonListener implements View.OnClickListener {
+        @Override
+        public void onClick(View v) {
+            clearAllEditTexts();
+            clearSharedPreferences();
+        }
     }
 
     private void getAllEditTexts() {
@@ -96,27 +158,31 @@ public class MainActivity extends AppCompatActivity {
         priceEditText.getText().clear();
     }
 
-    private class addNewCarButtonListener implements View.OnClickListener {
+    class SMSTokenizeReceiver extends BroadcastReceiver {
         @Override
-        public void onClick(View view) {
-            // hide keyboard
-            InputMethodManager inputManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        public void onReceive(Context context, Intent intent) {
+            String msg = intent.getStringExtra(SMSReceiver.SMS_MSG);
 
-            // show toaster
-            String makerInput = makerEditText.getText().toString();
-            Toast.makeText(MainActivity.this, "We added a new car (" + makerInput + ")", Toast.LENGTH_SHORT).show();
+            StringTokenizer tokenizer = new StringTokenizer(msg, ";");
+            String maker = tokenizer.nextToken();
+            String model = tokenizer.nextToken();
+            String year = tokenizer.nextToken();
+            String colour = tokenizer.nextToken();
+            String seats = tokenizer.nextToken();
+            String price = tokenizer.nextToken();
 
-            // save user inputs into SharedPreferences file
-            saveSharedPreferences();
-        }
-    }
+            makerEditText.setText(maker);
+            modelEditText.setText(model);
+            yearEditText.setText(year);
+            colorEditText.setText(colour);
+            priceEditText.setText(price);
 
-    private class clearButtonListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            clearAllEditTexts();
-            clearSharedPreferences();
+            // validate the number of seats
+            if (Integer.parseInt(seats) < 4 || Integer.parseInt(seats) > 8) {
+                seatEditText.setText("Must be within 4 to 8");
+            } else {
+                seatEditText.setText(seats);
+            }
         }
     }
 

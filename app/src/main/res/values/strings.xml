@@ -1,14 +1,18 @@
 <resources>
     <string name="app_name">AutoShowroom</string>
+    <string name="app_title">CarsApp (Kee Pei Jiin)</string>
     <string name="maker">Maker</string>
     <string name="model">Model</string>
-    <string name="app_title">CarsApp (Kee Pei Jiin)</string>
     <string name="year">Year</string>
     <string name="color">Color</string>
     <string name="seats">Seats</string>
     <string name="price">Price</string>
-    <string name="add_new_car">Add New Car</string>
+    <string name="add_new_car">Add Car</string>
     <string name="a_car_image">A car image</string>
     <string name="reset_all">Reset All</string>
     <string name="clear_all">Clear All</string>
+    <string name="remove_last_car">Remove Last Car</string>
+    <string name="remove_all_cars">Remove All Cars</string>
+    <string name="open_drawer">Open drawer</string>
+    <string name="close_drawer">Close drawer</string>
 </resources>
