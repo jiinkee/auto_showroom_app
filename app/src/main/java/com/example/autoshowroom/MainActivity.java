@@ -15,6 +15,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -89,6 +90,18 @@ public class MainActivity extends AppCompatActivity {
         super.onStart();
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.option_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        clearAllEditTexts();
+        return true;
+    }
+
     class NavMenuListener implements NavigationView.OnNavigationItemSelectedListener {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -129,15 +142,6 @@ public class MainActivity extends AppCompatActivity {
         cars.add(makerEditText.getText().toString() + " | " + modelEditText.getText().toString());
         carListAdapter.notifyDataSetChanged();
 
-    }
-
-    // options menu
-    private class clearButtonListener implements View.OnClickListener {
-        @Override
-        public void onClick(View v) {
-            clearAllEditTexts();
-            clearSharedPreferences();
-        }
     }
 
     private void getAllEditTexts() {

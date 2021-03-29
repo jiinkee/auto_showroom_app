@@ -7,12 +7,10 @@
     <string name="color">Color</string>
     <string name="seats">Seats</string>
     <string name="price">Price</string>
-    <string name="add_new_car">Add Car</string>
-    <string name="a_car_image">A car image</string>
-    <string name="reset_all">Reset All</string>
-    <string name="clear_all">Clear All</string>
-    <string name="remove_last_car">Remove Last Car</string>
-    <string name="remove_all_cars">Remove All Cars</string>
     <string name="open_drawer">Open drawer</string>
     <string name="close_drawer">Close drawer</string>
+    <string name="add_new_car">Add Car</string>
+    <string name="remove_last_car">Remove Last Car</string>
+    <string name="remove_all_cars">Remove All Cars</string>
+    <string name="clear_fields">Clear Fields</string>
 </resources>
