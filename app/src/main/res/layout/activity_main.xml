@@ -31,18 +31,17 @@
         android:id="@+id/titleLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
         android:text="@string/app_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.531"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/horizontalGuide1" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/makerLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="32dp"
         android:text="@string/maker"
         app:layout_constraintStart_toStartOf="@+id/verticalGuide1"
         app:layout_constraintTop_toBottomOf="@+id/titleLabel" />
@@ -79,11 +78,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
-        android:layout_marginBottom="13dp"
         android:text="@string/price"
-        app:layout_constraintBottom_toTopOf="@+id/listView"
+        app:layout_constraintBottom_toTopOf="@+id/horizontalGuide2"
         app:layout_constraintStart_toStartOf="@+id/verticalGuide1"
-        app:layout_constraintTop_toBottomOf="@+id/seatLabel" />
+        app:layout_constraintTop_toBottomOf="@+id/seatLabel"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/modelLabel"
@@ -164,17 +163,10 @@
         app:layout_constraintGuide_percent="0.35" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontalGuide1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.1" />
-
-    <androidx.constraintlayout.widget.Guideline
         android:id="@+id/horizontalGuide2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.59" />
+        app:layout_constraintGuide_percent="0.5" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
