@@ -1,172 +1,176 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    android:layout_height="match_parent">
 
-    <ListView
-        android:id="@+id/listView"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/horizontalGuide2" />
-
-    <EditText
-        android:id="@+id/editMaker"
-        android:layout_width="wrap_content"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/maker"
-        android:importantForAutofill="no"
-        android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/makerLabel"
-        app:layout_constraintStart_toStartOf="@+id/verticalGuide2" />
+        tools:context=".MainActivity">
 
-    <TextView
-        android:id="@+id/titleLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/app_title"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.531"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        <ListView
+            android:id="@+id/listView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/horizontalGuide2" />
 
-    <TextView
-        android:id="@+id/makerLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="@string/maker"
-        app:layout_constraintStart_toStartOf="@+id/verticalGuide1"
-        app:layout_constraintTop_toBottomOf="@+id/titleLabel" />
+        <EditText
+            android:id="@+id/editMaker"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/maker"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            app:layout_constraintBaseline_toBaselineOf="@+id/makerLabel"
+            app:layout_constraintStart_toStartOf="@+id/verticalGuide2" />
 
-    <TextView
-        android:id="@+id/yearLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="@string/year"
-        app:layout_constraintStart_toStartOf="@+id/verticalGuide1"
-        app:layout_constraintTop_toBottomOf="@+id/modelLabel" />
+        <TextView
+            android:id="@+id/titleLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/app_title"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.531"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/colorLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="@string/color"
-        app:layout_constraintStart_toStartOf="@+id/verticalGuide1"
-        app:layout_constraintTop_toBottomOf="@+id/yearLabel" />
+        <TextView
+            android:id="@+id/makerLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:text="@string/maker"
+            app:layout_constraintStart_toStartOf="@+id/verticalGuide1"
+            app:layout_constraintTop_toBottomOf="@+id/titleLabel" />
 
-    <TextView
-        android:id="@+id/seatLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="@string/seats"
-        app:layout_constraintStart_toStartOf="@+id/verticalGuide1"
-        app:layout_constraintTop_toBottomOf="@+id/colorLabel" />
+        <TextView
+            android:id="@+id/yearLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:text="@string/year"
+            app:layout_constraintStart_toStartOf="@+id/verticalGuide1"
+            app:layout_constraintTop_toBottomOf="@+id/modelLabel" />
 
-    <TextView
-        android:id="@+id/priceLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="@string/price"
-        app:layout_constraintBottom_toTopOf="@+id/horizontalGuide2"
-        app:layout_constraintStart_toStartOf="@+id/verticalGuide1"
-        app:layout_constraintTop_toBottomOf="@+id/seatLabel"
-        app:layout_constraintVertical_bias="0.0" />
+        <TextView
+            android:id="@+id/colorLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:text="@string/color"
+            app:layout_constraintStart_toStartOf="@+id/verticalGuide1"
+            app:layout_constraintTop_toBottomOf="@+id/yearLabel" />
 
-    <TextView
-        android:id="@+id/modelLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:text="@string/model"
-        app:layout_constraintStart_toStartOf="@+id/verticalGuide1"
-        app:layout_constraintTop_toBottomOf="@+id/makerLabel" />
+        <TextView
+            android:id="@+id/seatLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:text="@string/seats"
+            app:layout_constraintStart_toStartOf="@+id/verticalGuide1"
+            app:layout_constraintTop_toBottomOf="@+id/colorLabel" />
 
-    <EditText
-        android:id="@+id/editModel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/model"
-        android:importantForAutofill="no"
-        android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/modelLabel"
-        app:layout_constraintStart_toStartOf="@+id/verticalGuide2" />
+        <TextView
+            android:id="@+id/priceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:text="@string/price"
+            app:layout_constraintBottom_toTopOf="@+id/horizontalGuide2"
+            app:layout_constraintStart_toStartOf="@+id/verticalGuide1"
+            app:layout_constraintTop_toBottomOf="@+id/seatLabel"
+            app:layout_constraintVertical_bias="0.0" />
 
-    <EditText
-        android:id="@+id/editYear"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/year"
-        android:importantForAutofill="no"
-        android:inputType="number"
-        app:layout_constraintBaseline_toBaselineOf="@+id/yearLabel"
-        app:layout_constraintStart_toStartOf="@+id/verticalGuide2" />
+        <TextView
+            android:id="@+id/modelLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:text="@string/model"
+            app:layout_constraintStart_toStartOf="@+id/verticalGuide1"
+            app:layout_constraintTop_toBottomOf="@+id/makerLabel" />
 
-    <EditText
-        android:id="@+id/editColor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/color"
-        android:importantForAutofill="no"
-        android:inputType="textPersonName"
-        app:layout_constraintBaseline_toBaselineOf="@+id/colorLabel"
-        app:layout_constraintStart_toStartOf="@+id/verticalGuide2" />
+        <EditText
+            android:id="@+id/editModel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/model"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            app:layout_constraintBaseline_toBaselineOf="@+id/modelLabel"
+            app:layout_constraintStart_toStartOf="@+id/verticalGuide2" />
 
-    <EditText
-        android:id="@+id/editSeat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/seats"
-        android:importantForAutofill="no"
-        android:inputType="number"
-        app:layout_constraintBaseline_toBaselineOf="@+id/seatLabel"
-        app:layout_constraintStart_toStartOf="@+id/verticalGuide2" />
+        <EditText
+            android:id="@+id/editYear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/year"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            app:layout_constraintBaseline_toBaselineOf="@+id/yearLabel"
+            app:layout_constraintStart_toStartOf="@+id/verticalGuide2" />
 
-    <EditText
-        android:id="@+id/editPrice"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="@string/price"
-        android:importantForAutofill="no"
-        android:inputType="numberDecimal"
-        app:layout_constraintBaseline_toBaselineOf="@+id/priceLabel"
-        app:layout_constraintStart_toStartOf="@+id/verticalGuide2" />
+        <EditText
+            android:id="@+id/editColor"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/color"
+            android:importantForAutofill="no"
+            android:inputType="textPersonName"
+            app:layout_constraintBaseline_toBaselineOf="@+id/colorLabel"
+            app:layout_constraintStart_toStartOf="@+id/verticalGuide2" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/verticalGuide1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.1" />
+        <EditText
+            android:id="@+id/editSeat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/seats"
+            android:importantForAutofill="no"
+            android:inputType="number"
+            app:layout_constraintBaseline_toBaselineOf="@+id/seatLabel"
+            app:layout_constraintStart_toStartOf="@+id/verticalGuide2" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/verticalGuide2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.35" />
+        <EditText
+            android:id="@+id/editPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/price"
+            android:importantForAutofill="no"
+            android:inputType="numberDecimal"
+            app:layout_constraintBaseline_toBaselineOf="@+id/priceLabel"
+            app:layout_constraintStart_toStartOf="@+id/verticalGuide2" />
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/horizontalGuide2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/verticalGuide1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.1" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/verticalGuide2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.35" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/horizontalGuide2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

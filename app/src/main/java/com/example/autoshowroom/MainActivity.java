@@ -1,6 +1,7 @@
 package com.example.autoshowroom;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -70,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
 
         // bind list view with its data source using adapter
         ListView carList = findViewById(R.id.listView);
+        if (savedInstanceState != null) {
+            cars = savedInstanceState.getStringArrayList("CARS");
+        }
         carListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, cars);
         carList.setAdapter(carListAdapter);
 
@@ -88,6 +92,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         restoreSharedPreferences();
         super.onStart();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        outState.putStringArrayList("CARS", cars);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
