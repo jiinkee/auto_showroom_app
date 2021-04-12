@@ -14,4 +14,5 @@
     <string name="remove_all_cars">Remove All Cars</string>
     <string name="clear_fields">Clear Fields</string>
     <string name="android_icon">android icon</string>
+    <string name="list_all_cars">List All Cars</string>
 </resources>

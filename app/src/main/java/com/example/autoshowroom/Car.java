@@ -42,6 +42,10 @@ public class Car {
         return year;
     }
 
+    public String getYearString() {
+        return Integer.toString(this.year);
+    }
+
     public void setYear(int year) {
         this.year = year;
     }
@@ -50,12 +54,20 @@ public class Car {
         return seatNum;
     }
 
+    public String getSeatNumString() {
+        return Integer.toString(this.seatNum);
+    }
+
     public void setSeatNum(int seatNum) {
         this.seatNum = seatNum;
     }
 
     public float getPrice() {
         return price;
+    }
+
+    public String getPriceString() {
+        return Float.toString(this.price);
     }
 
     public void setPrice(float price) {
