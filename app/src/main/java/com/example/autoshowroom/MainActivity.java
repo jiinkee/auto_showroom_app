@@ -1,7 +1,6 @@
 package com.example.autoshowroom;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -18,24 +17,29 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.gson.Gson;
+
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity {
     private EditText makerEditText, modelEditText, yearEditText, colorEditText, seatEditText, priceEditText;
     private DrawerLayout drawer;
-    ArrayList<String> cars = new ArrayList<>();
-    ArrayAdapter<String> carListAdapter;
+    private Toolbar toolbar;
+    private ListView carList;
+    private Context context;
+    ArrayList<String> carStringArray = new ArrayList<>();
+    ArrayAdapter<String> carStringArrayAdapter;
+
+    ArrayList<Car> carsArray = new ArrayList<>();
 
     private final static int NULL_INT_INPUT = -1;
     private final static float NULL_FLOAT_INPUT = -1;
@@ -45,13 +49,29 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_layout);
 
+        context = this;
+
         getAllEditTexts();
 
         // add my own toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
+        initializeMyOwnToolBar();
         // add navigation drawer & toggle menu
+        initializeNavMenu();
+        // add FAB
+        initializeFAB();
+        // bind list view with its data source using adapter
+        initializeListView(savedInstanceState);
+        // allow app to get car details input from SMS
+        initializeSMSInput();
+
+    }
+
+    private void initializeMyOwnToolBar() {
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+    }
+
+    private void initializeNavMenu() {
         drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.open_drawer, R.string.close_drawer);
@@ -59,33 +79,31 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
         NavigationView navView = findViewById(R.id.nav_view);
         navView.setNavigationItemSelectedListener(new NavMenuListener());
+    }
 
-        // add FAB
+    private void initializeFAB() {
         FloatingActionButton fab = findViewById(R.id.floatingActionButton);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                addNewCar();
-            }
-        });
+        fab.setOnClickListener(v -> addNewCar());
+    }
 
-        // bind list view with its data source using adapter
-        ListView carList = findViewById(R.id.listView);
+    private void initializeListView(Bundle savedInstanceState) {
+        carList = findViewById(R.id.listView);
         if (savedInstanceState != null) {
-            cars = savedInstanceState.getStringArrayList("CARS");
+            carStringArray = savedInstanceState.getStringArrayList("CARS");
         }
-        carListAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, cars);
-        carList.setAdapter(carListAdapter);
+        carStringArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, carStringArray);
+        carList.setAdapter(carStringArrayAdapter);
+    }
 
+    private void initializeSMSInput() {
         // Request permissions to access SMS
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS,
-        Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS}, 0);
+                Manifest.permission.READ_SMS, Manifest.permission.RECEIVE_SMS}, 0);
 
         // register broadcast receiver to tokenize an display values in SMS
         IntentFilter smsTokenizeIntentFilter = new IntentFilter(SMSReceiver.SMS_TOKENIZE);
         BroadcastReceiver smsTokenizeReceiver = new SMSTokenizeReceiver();
         registerReceiver(smsTokenizeReceiver, smsTokenizeIntentFilter);
-
     }
 
     @Override
@@ -96,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putStringArrayList("CARS", cars);
+        outState.putStringArrayList("CARS", carStringArray);
         super.onSaveInstanceState(outState);
     }
 
@@ -121,15 +139,20 @@ public class MainActivity extends AppCompatActivity {
                     addNewCar();
                     break;
                 case R.id.remove_last:
-                    if (cars.size() > 0) {
-                        cars.remove(cars.size() - 1);
-                        carListAdapter.notifyDataSetChanged();
+                    if (carStringArray.size() > 0) {
+                        carStringArray.remove(carStringArray.size() - 1);
+                        carStringArrayAdapter.notifyDataSetChanged();
                     }
                     break;
                 case R.id.remove_all:
-                    cars.clear();
-                    carListAdapter.notifyDataSetChanged();
+                    carStringArray.clear();
+                    carStringArrayAdapter.notifyDataSetChanged();
                     break;
+                case R.id.list_all_cars:
+                    Intent intent = new Intent(context, CarListActivity.class);
+                    String carJson = new Gson().toJson(carsArray);
+                    intent.putExtra(CarListActivity.CAR_OBJ_LIST, carJson);
+                    startActivity(intent);
             }
             drawer.closeDrawer(GravityCompat.START);
             return true;
@@ -149,8 +172,16 @@ public class MainActivity extends AppCompatActivity {
         saveSharedPreferences();
 
         // add car details to car list
-        cars.add(makerEditText.getText().toString() + " | " + modelEditText.getText().toString());
-        carListAdapter.notifyDataSetChanged();
+        Car newCar = new Car(makerEditText.getText().toString(),
+                            modelEditText.getText().toString(),
+                            Integer.parseInt(yearEditText.getText().toString()),
+                            colorEditText.getText().toString(),
+                            Integer.parseInt(seatEditText.getText().toString()),
+                            Float.parseFloat(priceEditText.getText().toString()));
+
+        carsArray.add(newCar);
+        carStringArray.add(newCar.toSimpleString());
+        carStringArrayAdapter.notifyDataSetChanged();
 
     }
 
