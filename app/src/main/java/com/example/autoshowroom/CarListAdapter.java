@@ -36,6 +36,7 @@ public class CarListAdapter extends RecyclerView.Adapter<CarListAdapter.CarItemV
         holder.model.setText(car.getModel());
         holder.year.setText(car.getYearString());
         holder.color.setText(car.getColor());
+        holder.seatNum.setText(car.getSeatNumString());
         holder.price.setText(car.getPriceString());
     }
 
