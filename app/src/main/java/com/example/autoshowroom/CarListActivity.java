@@ -16,9 +16,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class CarListActivity extends AppCompatActivity {
-    public final static String CAR_OBJ_LIST = "car_obj_list";
     RecyclerView recyclerView;
-    ArrayList<Car> carsData;
+    ArrayList<Car> carsData; // TODO read car list from Shared Preferences
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,7 +29,7 @@ public class CarListActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // retrieve data from Intent
-        String carJson = (String) getIntent().getSerializableExtra(CAR_OBJ_LIST);
+        String carJson = (String) getIntent().getSerializableExtra(MainActivity.CAR_OBJ_LIST);
         Type type = new TypeToken<ArrayList<Car>>() {}.getType();
         carsData = new Gson().fromJson(carJson, type);
 

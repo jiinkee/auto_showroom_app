@@ -27,6 +27,9 @@ import com.google.gson.Gson;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
@@ -36,13 +39,15 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ListView carList;
     private Context context;
+    // for list view (volatile data)
     ArrayList<String> carStringArray = new ArrayList<>();
     ArrayAdapter<String> carStringArrayAdapter;
+    // for recycler view (persistent data)
+    ArrayList<Car> carsArray;
 
-    ArrayList<Car> carsArray = new ArrayList<>();
+    Gson gson = new Gson();
 
-    private final static int NULL_INT_INPUT = -1;
-    private final static float NULL_FLOAT_INPUT = -1;
+    public final static String CAR_OBJ_LIST = "car_obj_list";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +113,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-        restoreSharedPreferences();
+        // get the last added cars from SP and populate its details in the fields
+        restoreLastCarFromSP();
         super.onStart();
     }
 
@@ -138,20 +144,21 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.add_car:
                     addNewCar();
                     break;
-                case R.id.remove_last:
+                case R.id.remove_last: // TODO does this affect the persistent SP data?
                     if (carStringArray.size() > 0) {
                         carStringArray.remove(carStringArray.size() - 1);
                         carStringArrayAdapter.notifyDataSetChanged();
                     }
                     break;
-                case R.id.remove_all:
+                case R.id.remove_all: // TODO does this affect the persistent SP data?
                     carStringArray.clear();
                     carStringArrayAdapter.notifyDataSetChanged();
                     break;
                 case R.id.list_all_cars:
+                    // TODO send nothing using intent
                     Intent intent = new Intent(context, CarListActivity.class);
                     String carJson = new Gson().toJson(carsArray);
-                    intent.putExtra(CarListActivity.CAR_OBJ_LIST, carJson);
+                    intent.putExtra(CAR_OBJ_LIST, carJson);
                     startActivity(intent);
             }
             drawer.closeDrawer(GravityCompat.START);
@@ -168,9 +175,6 @@ public class MainActivity extends AppCompatActivity {
         String makerInput = makerEditText.getText().toString();
         Toast.makeText(MainActivity.this, "A new car from " + makerInput + " added", Toast.LENGTH_SHORT).show();
 
-        // save user inputs into SharedPreferences file
-        saveSharedPreferences();
-
         // add car details to car list
         Car newCar = new Car(makerEditText.getText().toString(),
                             modelEditText.getText().toString(),
@@ -179,10 +183,11 @@ public class MainActivity extends AppCompatActivity {
                             Integer.parseInt(seatEditText.getText().toString()),
                             Float.parseFloat(priceEditText.getText().toString()));
 
-        carsArray.add(newCar);
+        // save user inputs into SharedPreferences file
+        saveSharedPreferences(newCar);
+
         carStringArray.add(newCar.toSimpleString());
         carStringArrayAdapter.notifyDataSetChanged();
-
     }
 
     private void getAllEditTexts() {
@@ -201,6 +206,50 @@ public class MainActivity extends AppCompatActivity {
         colorEditText.getText().clear();
         seatEditText.getText().clear();
         priceEditText.getText().clear();
+    }
+
+    private void saveSharedPreferences(Car car) {
+        SharedPreferences persistentCars = getPreferences(0);
+        SharedPreferences.Editor editor = persistentCars.edit();
+
+        // add the new car into the cars array list
+        carsArray.add(car);
+
+        // overwrite the original cars array json with the new one
+        Gson gson = new Gson();
+        String carJson = gson.toJson(carsArray);
+        editor.putString(CAR_OBJ_LIST, carJson);
+
+        editor.apply();
+    }
+
+    private void restoreLastCarFromSP() {
+        // get the original list of cars stored in SharedPreferences
+        SharedPreferences persistentCars = getPreferences(0);
+        String carJson = persistentCars.getString(CAR_OBJ_LIST, "");
+        Type type = new TypeToken<ArrayList<Car>>() {}.getType();
+        carsArray = gson.fromJson(carJson, type);
+
+        // get the last added car and populate its details into the EditText
+        if (carsArray != null && carsArray.size() >= 1){
+            Car lastCar = carsArray.get(carsArray.size() - 1);
+            makerEditText.setText(lastCar.getMaker());
+            modelEditText.setText(lastCar.getModel());
+            yearEditText.setText(lastCar.getYearString());
+            colorEditText.setText(lastCar.getColor());
+            seatEditText.setText(lastCar.getSeatNumString());
+            priceEditText.setText(lastCar.getPriceString());
+        } else {
+            carsArray = new ArrayList<>();
+        }
+    }
+
+    private void clearSharedPreferences() {
+        SharedPreferences persistentLastCar = getPreferences(0);
+        SharedPreferences.Editor editor = persistentLastCar.edit();
+
+        editor.clear();
+        editor.apply();
     }
 
     class SMSTokenizeReceiver extends BroadcastReceiver {
@@ -229,55 +278,5 @@ public class MainActivity extends AppCompatActivity {
                 seatEditText.setText(seats);
             }
         }
-    }
-
-    private void saveSharedPreferences() {
-        SharedPreferences persistentLastCar = getPreferences(0);
-        SharedPreferences.Editor editor = persistentLastCar.edit();
-
-        editor.putString(getString(R.string.maker), makerEditText.getText().toString());
-        editor.putString(getString(R.string.model), modelEditText.getText().toString());
-        editor.putInt(getString(R.string.year), Integer.parseInt(yearEditText.getText().toString()));
-        editor.putString(getString(R.string.color), colorEditText.getText().toString());
-        editor.putInt(getString(R.string.seats), Integer.parseInt(seatEditText.getText().toString()));
-        editor.putFloat(getString(R.string.price), Float.parseFloat(priceEditText.getText().toString()));
-
-        editor.apply();
-    }
-
-    private void restoreSharedPreferences() {
-        SharedPreferences persistentLastCar = getPreferences(0);
-
-        String lastMaker = persistentLastCar.getString(getString(R.string.maker), "");
-        makerEditText.setText(lastMaker);
-
-        String lastModel = persistentLastCar.getString(getString(R.string.model), "");
-        modelEditText.setText(lastModel);
-
-        String lastYear = Integer.toString(persistentLastCar.getInt(getString(R.string.year), NULL_INT_INPUT));
-        yearEditText.setText(validateInput(lastYear));
-
-        String lastColor = persistentLastCar.getString(getString(R.string.color), "");
-        colorEditText.setText(lastColor);
-
-        String lastSeat = Integer.toString(persistentLastCar.getInt(getString(R.string.seats), NULL_INT_INPUT));
-        seatEditText.setText(validateInput(lastSeat));
-
-        String lastPrice = Float.toString(persistentLastCar.getFloat(getString(R.string.price), NULL_FLOAT_INPUT));
-        priceEditText.setText(validateInput(lastPrice));
-    }
-
-    private String validateInput(String userInput) {
-        return (userInput.equals(Integer.toString(NULL_INT_INPUT)) || userInput.equals(Float.toString(NULL_FLOAT_INPUT)))
-                ? ""
-                : userInput;
-    }
-
-    private void clearSharedPreferences() {
-        SharedPreferences persistentLastCar = getPreferences(0);
-        SharedPreferences.Editor editor = persistentLastCar.edit();
-
-        editor.clear();
-        editor.apply();
     }
 }
