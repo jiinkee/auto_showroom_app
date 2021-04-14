@@ -1,5 +1,6 @@
 package com.example.autoshowroom;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
 
 public class CarListActivity extends AppCompatActivity {
     RecyclerView recyclerView;
-    ArrayList<Car> carsData; // TODO read car list from Shared Preferences
+    ArrayList<Car> carsData;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -28,15 +29,26 @@ public class CarListActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // retrieve data from Intent
-        String carJson = (String) getIntent().getSerializableExtra(MainActivity.CAR_OBJ_LIST);
-        Type type = new TypeToken<ArrayList<Car>>() {}.getType();
-        carsData = new Gson().fromJson(carJson, type);
+        // retrieve car list data from SharedPreferences
+        getCarsDataFromSP();
 
         // initialize recycler view
         recyclerView = findViewById(R.id.carListRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new CarListAdapter(this, carsData));
 
+    }
+
+    private void getCarsDataFromSP() {
+        SharedPreferences persistentCars = getSharedPreferences(MainActivity.CAR_SP, 0);
+        String carsJson = persistentCars.getString(MainActivity.CAR_OBJ_LIST, "");
+
+        if (carsJson.equals("")) {
+            carsData = new ArrayList<>();
+        } else {
+            Type type = new TypeToken<ArrayList<Car>>() {}.getType();
+            Gson gson = new Gson();
+            carsData = gson.fromJson(carsJson, type);
+        }
     }
 }

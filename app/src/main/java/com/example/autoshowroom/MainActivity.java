@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     Gson gson = new Gson();
 
     public final static String CAR_OBJ_LIST = "car_obj_list";
+    public final static String CAR_SP = "cars";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -155,10 +156,7 @@ public class MainActivity extends AppCompatActivity {
                     carStringArrayAdapter.notifyDataSetChanged();
                     break;
                 case R.id.list_all_cars:
-                    // TODO send nothing using intent
                     Intent intent = new Intent(context, CarListActivity.class);
-                    String carJson = new Gson().toJson(carsArray);
-                    intent.putExtra(CAR_OBJ_LIST, carJson);
                     startActivity(intent);
             }
             drawer.closeDrawer(GravityCompat.START);
@@ -209,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void saveSharedPreferences(Car car) {
-        SharedPreferences persistentCars = getPreferences(0);
+        SharedPreferences persistentCars = getSharedPreferences(CAR_SP,0);
         SharedPreferences.Editor editor = persistentCars.edit();
 
         // add the new car into the cars array list
@@ -225,7 +223,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void restoreLastCarFromSP() {
         // get the original list of cars stored in SharedPreferences
-        SharedPreferences persistentCars = getPreferences(0);
+        SharedPreferences persistentCars = getSharedPreferences(CAR_SP, 0);
         String carJson = persistentCars.getString(CAR_OBJ_LIST, "");
         Type type = new TypeToken<ArrayList<Car>>() {}.getType();
         carsArray = gson.fromJson(carJson, type);
@@ -245,7 +243,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void clearSharedPreferences() {
-        SharedPreferences persistentLastCar = getPreferences(0);
+        SharedPreferences persistentLastCar = getSharedPreferences(CAR_SP, 0);
         SharedPreferences.Editor editor = persistentLastCar.edit();
 
         editor.clear();
