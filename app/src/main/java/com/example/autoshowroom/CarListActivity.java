@@ -29,8 +29,10 @@ public class CarListActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // retrieve car list data from SharedPreferences
-        getCarsDataFromSP();
+        // retrieve car list data from Intent
+        String carJson = (String) getIntent().getSerializableExtra(MainActivity.CAR_OBJ_LIST);
+        Type type = new TypeToken<ArrayList<Car>>() {}.getType();
+        carsData = new Gson().fromJson(carJson, type);
 
         // initialize recycler view
         recyclerView = findViewById(R.id.carListRecyclerView);

@@ -39,11 +39,11 @@ public class MainActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private ListView carList;
     private Context context;
-    // for list view (volatile data)
+    // for list view
     ArrayList<String> carStringArray = new ArrayList<>();
     ArrayAdapter<String> carStringArrayAdapter;
-    // for recycler view (persistent data)
-    ArrayList<Car> carsArray;
+    // for recycler view
+    ArrayList<Car> carsArray = new ArrayList<>();
 
     Gson gson = new Gson();
 
@@ -145,18 +145,24 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.add_car:
                     addNewCar();
                     break;
-                case R.id.remove_last: // TODO does this affect the persistent SP data?
+                case R.id.remove_last:
                     if (carStringArray.size() > 0) {
                         carStringArray.remove(carStringArray.size() - 1);
                         carStringArrayAdapter.notifyDataSetChanged();
                     }
+                    if (carsArray.size() > 0) {
+                        carsArray.remove(carsArray.size() - 1);
+                    }
                     break;
-                case R.id.remove_all: // TODO does this affect the persistent SP data?
+                case R.id.remove_all:
                     carStringArray.clear();
                     carStringArrayAdapter.notifyDataSetChanged();
+                    carsArray.clear();
                     break;
                 case R.id.list_all_cars:
                     Intent intent = new Intent(context, CarListActivity.class);
+                    String carJson = new Gson().toJson(carsArray);
+                    intent.putExtra(CAR_OBJ_LIST, carJson);
                     startActivity(intent);
             }
             drawer.closeDrawer(GravityCompat.START);
@@ -181,9 +187,11 @@ public class MainActivity extends AppCompatActivity {
                             Integer.parseInt(seatEditText.getText().toString()),
                             Float.parseFloat(priceEditText.getText().toString()));
 
-        // save user inputs into SharedPreferences file
-        saveSharedPreferences(newCar);
+        // save the latest car into SharedPreferences file
+        saveLastCarInSP(newCar);
 
+        // add the latest car into the volatile lists
+        carsArray.add(newCar);
         carStringArray.add(newCar.toSimpleString());
         carStringArrayAdapter.notifyDataSetChanged();
     }
@@ -206,39 +214,32 @@ public class MainActivity extends AppCompatActivity {
         priceEditText.getText().clear();
     }
 
-    private void saveSharedPreferences(Car car) {
+    private void saveLastCarInSP(Car car) {
         SharedPreferences persistentCars = getSharedPreferences(CAR_SP,0);
         SharedPreferences.Editor editor = persistentCars.edit();
 
-        // add the new car into the cars array list
-        carsArray.add(car);
-
         // overwrite the original cars array json with the new one
         Gson gson = new Gson();
-        String carJson = gson.toJson(carsArray);
+        String carJson = gson.toJson(car);
         editor.putString(CAR_OBJ_LIST, carJson);
 
         editor.apply();
     }
 
     private void restoreLastCarFromSP() {
-        // get the original list of cars stored in SharedPreferences
+        // get the saved last car stored in SharedPreferences
         SharedPreferences persistentCars = getSharedPreferences(CAR_SP, 0);
         String carJson = persistentCars.getString(CAR_OBJ_LIST, "");
-        Type type = new TypeToken<ArrayList<Car>>() {}.getType();
-        carsArray = gson.fromJson(carJson, type);
+        Type type = new TypeToken<Car>() {}.getType();
+        Car lastCar = gson.fromJson(carJson, type);
 
-        // get the last added car and populate its details into the EditText
-        if (carsArray != null && carsArray.size() >= 1){
-            Car lastCar = carsArray.get(carsArray.size() - 1);
+        if (lastCar != null) {
             makerEditText.setText(lastCar.getMaker());
             modelEditText.setText(lastCar.getModel());
             yearEditText.setText(lastCar.getYearString());
             colorEditText.setText(lastCar.getColor());
             seatEditText.setText(lastCar.getSeatNumString());
             priceEditText.setText(lastCar.getPriceString());
-        } else {
-            carsArray = new ArrayList<>();
         }
     }
 
