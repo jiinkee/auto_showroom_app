@@ -10,6 +10,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -38,6 +39,12 @@ public class CarListActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.carListRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new CarListAdapter(this, carsData));
+
+        // FAB
+        FloatingActionButton fab = findViewById(R.id.carListFAB);
+        fab.setOnClickListener(view -> {
+            finish();
+        });
 
     }
 

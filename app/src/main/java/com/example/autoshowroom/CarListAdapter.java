@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -38,6 +39,12 @@ public class CarListAdapter extends RecyclerView.Adapter<CarListAdapter.CarItemV
         holder.color.setText(car.getColor());
         holder.seatNum.setText(car.getSeatNumString());
         holder.price.setText(car.getPriceString());
+
+        holder.itemView.setOnClickListener(view -> {
+            Toast.makeText(view.getContext(), "Car No." + (position + 1) + "with name:" +
+                            car.getMaker() + " and model:" + car.getModel() + " is selected",
+                    Toast.LENGTH_SHORT).show();
+        });
     }
 
     @Override
