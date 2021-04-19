@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.Manifest;
 import android.content.BroadcastReceiver;
@@ -24,6 +25,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.autoshowroom.service.Car;
+import com.example.autoshowroom.service.CarViewModel;
 import com.google.gson.Gson;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -44,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> carStringArray = new ArrayList<>();
     ArrayAdapter<String> carStringArrayAdapter;
     // for recycler view
-    ArrayList<Car> carsArray = new ArrayList<>();
+    private CarViewModel viewModel;
 
     Gson gson = new Gson();
 
@@ -70,6 +72,9 @@ public class MainActivity extends AppCompatActivity {
         initializeListView(savedInstanceState);
         // allow app to get car details input from SMS
         initializeSMSInput();
+
+        // get view model
+        viewModel = new ViewModelProvider(this).get(CarViewModel.class);
 
     }
 
@@ -151,19 +156,13 @@ public class MainActivity extends AppCompatActivity {
                         carStringArray.remove(carStringArray.size() - 1);
                         carStringArrayAdapter.notifyDataSetChanged();
                     }
-                    if (carsArray.size() > 0) {
-                        carsArray.remove(carsArray.size() - 1);
-                    }
                     break;
                 case R.id.remove_all:
                     carStringArray.clear();
                     carStringArrayAdapter.notifyDataSetChanged();
-                    carsArray.clear();
                     break;
                 case R.id.list_all_cars:
                     Intent intent = new Intent(context, CarListActivity.class);
-                    String carJson = new Gson().toJson(carsArray);
-                    intent.putExtra(CAR_OBJ_LIST, carJson);
                     startActivity(intent);
             }
             drawer.closeDrawer(GravityCompat.START);
@@ -181,8 +180,8 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(MainActivity.this, "A new car from " + makerInput + " added", Toast.LENGTH_SHORT).show();
 
         // add car details to car list
-        Car newCar = new Car(makerEditText.getText().toString(),
-                            modelEditText.getText().toString(),
+        Car newCar = new Car(modelEditText.getText().toString(),
+                            makerEditText.getText().toString(),
                             Integer.parseInt(yearEditText.getText().toString()),
                             colorEditText.getText().toString(),
                             Integer.parseInt(seatEditText.getText().toString()),
@@ -191,10 +190,12 @@ public class MainActivity extends AppCompatActivity {
         // save the latest car into SharedPreferences file
         saveLastCarInSP(newCar);
 
-        // add the latest car into the volatile lists
-        carsArray.add(newCar);
+        // add the latest car into ListView array
         carStringArray.add(newCar.toSimpleString());
         carStringArrayAdapter.notifyDataSetChanged();
+
+        // save the latest car into Database
+        viewModel.addNewCar(newCar);
     }
 
     private void getAllEditTexts() {

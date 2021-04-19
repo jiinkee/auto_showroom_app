@@ -5,12 +5,12 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Dao
 public interface CarDao {
     @Query("select * from cars")
-    LiveData<ArrayList<Car>> getAllCars();
+    LiveData<List<Car>> getAllCars();
 
     @Insert
     void insert(Car car);

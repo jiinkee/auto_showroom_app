@@ -12,11 +12,11 @@ public class Car {
     @ColumnInfo(name = "carId")
     private int id;
 
-    @ColumnInfo(name = "carModel")
-    private String model;
-
     @ColumnInfo(name = "carMaker")
     private String maker;
+
+    @ColumnInfo(name = "carModel")
+    private String model;
 
     @ColumnInfo(name = "carColor")
     private String color;
@@ -101,5 +101,13 @@ public class Car {
 
     public String toSimpleString() {
         return this.model + " | " + this.maker;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(@NonNull int id) {
+        this.id = id;
     }
 }

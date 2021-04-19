@@ -6,7 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class CarViewModel extends AndroidViewModel {
     private CarRepository carRepo;
@@ -16,7 +16,7 @@ public class CarViewModel extends AndroidViewModel {
         carRepo = new CarRepository(application);
     }
 
-    public LiveData<ArrayList<Car>> getAllCars() {
+    public LiveData<List<Car>> getAllCars() {
         return carRepo.getAllCars();
     }
 

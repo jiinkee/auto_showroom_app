@@ -4,11 +4,11 @@ import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class CarRepository {
     private CarDao carDao;
-    private LiveData<ArrayList<Car>> cars;
+    private LiveData<List<Car>> cars;
 
     public CarRepository (Application application) {
         CarDatabase carDatabase = CarDatabase.getDatabase(application);
@@ -16,7 +16,7 @@ public class CarRepository {
         cars = carDao.getAllCars();
     }
 
-    public LiveData<ArrayList<Car>> getAllCars() {
+    public LiveData<List<Car>> getAllCars() {
         return cars;
     }
 

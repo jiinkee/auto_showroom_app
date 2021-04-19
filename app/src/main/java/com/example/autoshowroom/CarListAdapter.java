@@ -8,19 +8,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.LiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.autoshowroom.service.Car;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class CarListAdapter extends RecyclerView.Adapter<CarListAdapter.CarItemViewHolder> {
     Context context;
-    ArrayList<Car> carsData;
+    List<Car> carsData = new ArrayList<>();
 
-    public CarListAdapter(Context ctx, ArrayList<Car> cars) {
+    public CarListAdapter(Context ctx) {
         this.context = ctx;
-        this.carsData = cars;
+    }
+
+    public void setCarsData(List<Car> cars) {
+        carsData = cars;
     }
 
     @NonNull

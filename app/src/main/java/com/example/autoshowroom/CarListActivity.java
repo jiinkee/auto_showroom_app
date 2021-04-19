@@ -6,10 +6,12 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.autoshowroom.service.Car;
+import com.example.autoshowroom.service.CarViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -19,7 +21,8 @@ import java.util.ArrayList;
 
 public class CarListActivity extends AppCompatActivity {
     RecyclerView recyclerView;
-    ArrayList<Car> carsData;
+    CarViewModel viewModel;
+    CarListAdapter carListAdapter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -30,15 +33,14 @@ public class CarListActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // retrieve car list data from Intent
-        String carJson = (String) getIntent().getSerializableExtra(MainActivity.CAR_OBJ_LIST);
-        Type type = new TypeToken<ArrayList<Car>>() {}.getType();
-        carsData = new Gson().fromJson(carJson, type);
+        // retrieve view model
+        viewModel = new ViewModelProvider(this).get(CarViewModel.class);
 
         // initialize recycler view
         recyclerView = findViewById(R.id.carListRecyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(new CarListAdapter(this, carsData));
+        carListAdapter = new CarListAdapter(this);
+        recyclerView.setAdapter(carListAdapter);
 
         // FAB
         FloatingActionButton fab = findViewById(R.id.carListFAB);
@@ -46,18 +48,11 @@ public class CarListActivity extends AppCompatActivity {
             finish();
         });
 
-    }
+        // observe the car list data from view model and update recycler view adapter accordingly
+        viewModel.getAllCars().observe(this, cars -> {
+            carListAdapter.setCarsData(cars);
+            carListAdapter.notifyDataSetChanged();
+        });
 
-    private void getCarsDataFromSP() {
-        SharedPreferences persistentCars = getSharedPreferences(MainActivity.CAR_SP, 0);
-        String carsJson = persistentCars.getString(MainActivity.CAR_OBJ_LIST, "");
-
-        if (carsJson.equals("")) {
-            carsData = new ArrayList<>();
-        } else {
-            Type type = new TypeToken<ArrayList<Car>>() {}.getType();
-            Gson gson = new Gson();
-            carsData = gson.fromJson(carsJson, type);
-        }
     }
 }
