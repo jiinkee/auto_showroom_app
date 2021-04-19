@@ -10,6 +10,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.autoshowroom.service.Car;
+
 import java.util.ArrayList;
 
 public class CarListAdapter extends RecyclerView.Adapter<CarListAdapter.CarItemViewHolder> {

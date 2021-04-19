@@ -1,8 +1,33 @@
-package com.example.autoshowroom;
+package com.example.autoshowroom.service;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+@Entity(tableName = "cars")
 public class Car {
-    private String model, maker, color;
-    private int year, seatNum;
+    @PrimaryKey (autoGenerate = true)
+    @NonNull
+    @ColumnInfo(name = "carId")
+    private int id;
+
+    @ColumnInfo(name = "carModel")
+    private String model;
+
+    @ColumnInfo(name = "carMaker")
+    private String maker;
+
+    @ColumnInfo(name = "carColor")
+    private String color;
+
+    @ColumnInfo(name = "carManufactureYear")
+    private int year;
+
+    @ColumnInfo(name = "carSeatNum")
+    private int seatNum;
+
+    @ColumnInfo(name = "carPrice")
     private float price;
 
     public Car(String model, String maker, int year, String color, int seatNum, float price) {
