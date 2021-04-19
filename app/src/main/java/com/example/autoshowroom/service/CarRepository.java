@@ -23,4 +23,8 @@ public class CarRepository {
     public void insert(Car car) {
         CarDatabase.databaseWriteExecutor.execute(() -> carDao.insert(car));
     }
+
+    public void deleteAll() {
+        CarDatabase.databaseWriteExecutor.execute(() -> carDao.deleteAll());
+    }
 }

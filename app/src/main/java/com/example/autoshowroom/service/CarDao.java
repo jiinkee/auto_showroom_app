@@ -14,4 +14,7 @@ public interface CarDao {
 
     @Insert
     void insert(Car car);
+
+    @Query("delete from cars")
+    void deleteAll();
 }

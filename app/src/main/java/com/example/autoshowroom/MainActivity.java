@@ -160,6 +160,8 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.remove_all:
                     carStringArray.clear();
                     carStringArrayAdapter.notifyDataSetChanged();
+                    viewModel.deleteAllCars();
+                    Toast.makeText(getApplicationContext(), "All cars deleted from database", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.list_all_cars:
                     Intent intent = new Intent(context, CarListActivity.class);
