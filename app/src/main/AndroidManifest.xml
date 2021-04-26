@@ -14,7 +14,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AutoShowroom">
-        <activity android:name=".MainActivity"
+
+        <provider
+            android:name=".service.CarContentProvider"
+            android:authorities="fit2081.app.KEE"
+            android:enabled="true"
+            android:exported="true">
+        </provider>
+
+
+        <activity
+            android:name=".MainActivity"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,9 +32,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CarListActivity"
+        <activity
+            android:name=".CarListActivity"
             android:label="AutoShowroom: Car List"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity" />
 
         <receiver
             android:name=".SMSReceiver"

@@ -7,6 +7,8 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "cars")
 public class Car {
+    static final String CAR_TABLE = "cars";
+
     @PrimaryKey (autoGenerate = true)
     @NonNull
     @ColumnInfo(name = "carId")
