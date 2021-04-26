@@ -40,12 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText makerEditText, modelEditText, yearEditText, colorEditText, seatEditText, priceEditText;
     private DrawerLayout drawer;
     private Toolbar toolbar;
-    private ListView carList;
     private Context context;
-    // for list view
-    ArrayList<String> carStringArray = new ArrayList<>();
-    ArrayAdapter<String> carStringArrayAdapter;
-    // for recycler view
+
     private CarViewModel viewModel;
 
     Gson gson = new Gson();
@@ -68,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
         initializeNavMenu();
         // add FAB
         initializeFAB();
-        // bind list view with its data source using adapter
-        initializeListView(savedInstanceState);
         // allow app to get car details input from SMS
         initializeSMSInput();
 
@@ -98,15 +92,6 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(v -> addNewCar());
     }
 
-    private void initializeListView(Bundle savedInstanceState) {
-        carList = findViewById(R.id.listView);
-        if (savedInstanceState != null) {
-            carStringArray = savedInstanceState.getStringArrayList("CARS");
-        }
-        carStringArrayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, carStringArray);
-        carList.setAdapter(carStringArrayAdapter);
-    }
-
     private void initializeSMSInput() {
         // Request permissions to access SMS
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.SEND_SMS,
@@ -127,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-        outState.putStringArrayList("CARS", carStringArray);
+//        outState.putStringArrayList("CARS", carStringArray);
         super.onSaveInstanceState(outState);
     }
 
@@ -152,14 +137,9 @@ public class MainActivity extends AppCompatActivity {
                     addNewCar();
                     break;
                 case R.id.remove_last:
-                    if (carStringArray.size() > 0) {
-                        carStringArray.remove(carStringArray.size() - 1);
-                        carStringArrayAdapter.notifyDataSetChanged();
-                    }
+                    // do nothing
                     break;
                 case R.id.remove_all:
-                    carStringArray.clear();
-                    carStringArrayAdapter.notifyDataSetChanged();
                     viewModel.deleteAllCars();
                     Toast.makeText(getApplicationContext(), "All cars deleted from database", Toast.LENGTH_SHORT).show();
                     break;
@@ -191,10 +171,6 @@ public class MainActivity extends AppCompatActivity {
 
         // save the latest car into SharedPreferences file
         saveLastCarInSP(newCar);
-
-        // add the latest car into ListView array
-        carStringArray.add(newCar.toSimpleString());
-        carStringArrayAdapter.notifyDataSetChanged();
 
         // save the latest car into Database
         viewModel.addNewCar(newCar);
@@ -245,14 +221,6 @@ public class MainActivity extends AppCompatActivity {
             seatEditText.setText(lastCar.getSeatNumString());
             priceEditText.setText(lastCar.getPriceString());
         }
-    }
-
-    private void clearSharedPreferences() {
-        SharedPreferences persistentLastCar = getSharedPreferences(CAR_SP, 0);
-        SharedPreferences.Editor editor = persistentLastCar.edit();
-
-        editor.clear();
-        editor.apply();
     }
 
     class SMSTokenizeReceiver extends BroadcastReceiver {
