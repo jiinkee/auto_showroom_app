@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import com.example.autoshowroom.service.Car;
 import com.example.autoshowroom.service.CarViewModel;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.gson.Gson;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -43,6 +45,8 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
 
     private CarViewModel viewModel;
+
+    public DatabaseReference myRef;
 
     Gson gson = new Gson();
 
@@ -69,6 +73,10 @@ public class MainActivity extends AppCompatActivity {
 
         // get view model
         viewModel = new ViewModelProvider(this).get(CarViewModel.class);
+
+        // set up Firebase connection
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        myRef = database.getReference("autoShowroom/fleet");
 
     }
 
@@ -112,7 +120,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
-//        outState.putStringArrayList("CARS", carStringArray);
         super.onSaveInstanceState(outState);
     }
 
@@ -141,6 +148,8 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.remove_all:
                     viewModel.deleteAllCars();
+                    // delete all cars in Firebase as well
+                    myRef.removeValue();
                     Toast.makeText(getApplicationContext(), "All cars deleted from database", Toast.LENGTH_SHORT).show();
                     break;
                 case R.id.list_all_cars:
@@ -172,8 +181,11 @@ public class MainActivity extends AppCompatActivity {
         // save the latest car into SharedPreferences file
         saveLastCarInSP(newCar);
 
-        // save the latest car into Database
+        // save the latest car into local ROOM Database
         viewModel.addNewCar(newCar);
+
+        // store the latest car in Firebase
+        myRef.push().setValue(newCar);
     }
 
     private void getAllEditTexts() {
