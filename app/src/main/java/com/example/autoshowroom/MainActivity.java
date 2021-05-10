@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
+import androidx.core.view.MotionEventCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -18,6 +19,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
@@ -43,10 +46,10 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawer;
     private Toolbar toolbar;
     private Context context;
-
     private CarViewModel viewModel;
-
     public DatabaseReference myRef;
+    private View layout;
+    private float x_down, y_down; // store the initial x & y coordinates of touch event
 
     Gson gson = new Gson();
 
@@ -78,6 +81,34 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference("autoShowroom/fleet");
 
+        layout = findViewById(R.id.activityId);
+        layout.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                int action = event.getActionMasked();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        x_down = event.getX();
+                        y_down = event.getY();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        if (Math.abs(event.getY() - y_down) < 20) {
+                            // gesture is from left to right, add new car
+                            if (x_down - event.getX() < 0) {
+                                addNewCar();
+                            }
+                        } else {
+                            // gesture is from top to bottom, clear all fields
+                            if (y_down - event.getY() < 0) {
+                                clearAllEditTexts();
+                                Toast.makeText(context, "Fields cleared!", Toast.LENGTH_SHORT).show();;
+                            }
+                        }
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
     private void initializeMyOwnToolBar() {
@@ -93,6 +124,8 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
         NavigationView navView = findViewById(R.id.nav_view);
         navView.setNavigationItemSelectedListener(new NavMenuListener());
+
+
     }
 
     private void initializeFAB() {
