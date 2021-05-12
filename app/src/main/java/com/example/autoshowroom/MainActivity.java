@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
-import androidx.core.view.MotionEventCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -22,9 +21,7 @@ import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.autoshowroom.service.Car;
@@ -38,7 +35,6 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 public class MainActivity extends AppCompatActivity {
@@ -48,8 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private CarViewModel viewModel;
     public DatabaseReference myRef;
-    private View layout;
-    private float x_down, y_down; // store the initial x & y coordinates of touch event
+    private float initialX, initialY; // store the initial x & y coordinates of touch event
 
     Gson gson = new Gson();
 
@@ -81,28 +76,30 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference("autoShowroom/fleet");
 
-        layout = findViewById(R.id.activityId);
-        layout.setOnTouchListener(new View.OnTouchListener() {
+        View constraintLayout = findViewById(R.id.constraintLayoutId);
+        constraintLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 int action = event.getActionMasked();
                 switch (action) {
                     case MotionEvent.ACTION_DOWN:
-                        x_down = event.getX();
-                        y_down = event.getY();
+                        initialX = event.getX();
+                        initialY = event.getY();
                         break;
                     case MotionEvent.ACTION_UP:
-                        if (Math.abs(event.getY() - y_down) < 20) {
+                        float currentX = event.getX();
+                        float currentY = event.getY();
+
+                        // set a y threshold and determine direction of horizontal swiping
+                        if (Math.abs(currentY - initialY) < 20 && initialX - currentX < 0) {
                             // gesture is from left to right, add new car
-                            if (x_down - event.getX() < 0) {
-                                addNewCar();
-                            }
-                        } else {
+                            addNewCar();
+                        }
+                        // set an x threshold and determine the direction of vertical swiping
+                        else if (Math.abs(currentX - initialX) < 50 && initialY - currentY < 0){
                             // gesture is from top to bottom, clear all fields
-                            if (y_down - event.getY() < 0) {
-                                clearAllEditTexts();
-                                Toast.makeText(context, "Fields cleared!", Toast.LENGTH_SHORT).show();;
-                            }
+                            clearAllEditTexts();
+                            Toast.makeText(context, "Fields cleared!", Toast.LENGTH_SHORT).show();;
                         }
                         break;
                 }
