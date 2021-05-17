@@ -12,3 +12,4 @@ This repo contains the source code of the weekly lab tasks of FIT2081 - Mobile A
 |Week 7| - Create SQLite database to store cars data <br> - Insert car into database when "Add New Car" is clicked <br> - Fetch cars data from database instead of SP in "List All Cars" activity <br> - Delete all cars from database when "Remove All Cars" is clicked |
 |Week 8| - Remove ListView <br> - Add Content Provider class <br> - Allow other applications to query the cars data & delete cars based on some conditions <br> - Connect app to Firebase <br> - Ensure that data in app synchronizes with Firebase |
 |Week 10| - Add left-to-right gesture listener to add new car <br> - Add top-to-bottom gesture listener to clear all input fields |
+|Week 11| - Add multiple gesture detectors e.g. single tap, double tap, long press, scrolling and flinging for multiple actions |
