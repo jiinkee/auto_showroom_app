@@ -1,6 +1,7 @@
 package com.example.autoshowroom;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -16,6 +17,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -44,12 +46,13 @@ public class MainActivity extends AppCompatActivity {
     private Context context;
     private CarViewModel viewModel;
     public DatabaseReference myRef;
-    private float initialX, initialY; // store the initial x & y coordinates of touch event
+//    private float initialX, initialY; // store the initial x & y coordinates of touch event
 
     Gson gson = new Gson();
-
     public final static String CAR_OBJ_LIST = "car_obj_list";
     public final static String CAR_SP = "cars";
+
+    GestureDetector gestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,33 +79,38 @@ public class MainActivity extends AppCompatActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         myRef = database.getReference("autoShowroom/fleet");
 
+        // set gesture detector listener
+        gestureDetector = new GestureDetector(this, new MyGestureDetector());
+
         View constraintLayout = findViewById(R.id.constraintLayoutId);
         constraintLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                int action = event.getActionMasked();
-                switch (action) {
-                    case MotionEvent.ACTION_DOWN:
-                        initialX = event.getX();
-                        initialY = event.getY();
-                        break;
-                    case MotionEvent.ACTION_UP:
-                        float currentX = event.getX();
-                        float currentY = event.getY();
+                gestureDetector.onTouchEvent(event);
 
-                        // set a y threshold and determine direction of horizontal swiping
-                        if (Math.abs(currentY - initialY) < 20 && initialX - currentX < 0) {
-                            // gesture is from left to right, add new car
-                            addNewCar();
-                        }
-                        // set an x threshold and determine the direction of vertical swiping
-                        else if (Math.abs(currentX - initialX) < 50 && initialY - currentY < 0){
-                            // gesture is from top to bottom, clear all fields
-                            clearAllEditTexts();
-                            Toast.makeText(context, "Fields cleared!", Toast.LENGTH_SHORT).show();;
-                        }
-                        break;
-                }
+//                int action = event.getActionMasked();
+//                switch (action) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        initialX = event.getX();
+//                        initialY = event.getY();
+//                        break;
+//                    case MotionEvent.ACTION_UP:
+//                        float currentX = event.getX();
+//                        float currentY = event.getY();
+//
+//                        // set a y threshold and determine direction of horizontal swiping
+//                        if (Math.abs(currentY - initialY) < 50 && initialX - currentX < 0) {
+//                            // gesture is from left to right, add new car
+//                            addNewCar();
+//                        }
+//                        // set an x threshold and determine the direction of vertical swiping
+//                        else if (Math.abs(currentX - initialX) < 50 && initialY - currentY < 0){
+//                            // gesture is from top to bottom, clear all fields
+//                            clearAllEditTexts();
+//                            Toast.makeText(context, "Fields cleared!", Toast.LENGTH_SHORT).show();;
+//                        }
+//                        break;
+//                }
                 return true;
             }
         });
@@ -290,6 +298,73 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 seatEditText.setText(seats);
             }
+        }
+    }
+
+    class MyGestureDetector extends GestureDetector.SimpleOnGestureListener {
+        // single tap - increment number of seats by 1
+        @Override
+        public boolean onSingleTapConfirmed(MotionEvent e) {
+            int initialSeatNum = 0;
+            if (!seatEditText.getText().toString().equals("")) {
+                initialSeatNum = Integer.parseInt(seatEditText.getText().toString());
+            }
+            int increasedSeatNum = initialSeatNum + 1;
+            seatEditText.setText(Integer.toString(increasedSeatNum));
+            return true;
+        }
+
+        // double tap - load a default car
+        @Override
+        public boolean onDoubleTap(MotionEvent e) {
+            Car defaultCar = new Car("Default", "BMW", 2021, "black", 6, 1000);
+            makerEditText.setText(defaultCar.getMaker());
+            modelEditText.setText(defaultCar.getModel());
+            yearEditText.setText(defaultCar.getYearString());
+            colorEditText.setText(defaultCar.getColor());
+            seatEditText.setText(defaultCar.getSeatNumString());
+            priceEditText.setText(defaultCar.getPriceString());
+            return true;
+        }
+
+        @Override
+        public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+            // get the initial price value
+            float initialPrice = 0;
+            if (!priceEditText.getText().toString().equals("")) {
+                initialPrice = Float.parseFloat(priceEditText.getText().toString());
+            }
+
+            float newPrice = 0;
+
+            // horizontal right to left scroll - increment price by the amount of scroll
+            if (distanceX > 0) {
+                newPrice = Math.min(initialPrice + Math.abs(distanceX), 5000);
+            }
+            // horizontal left to right scroll - decrement price by the amount of scroll
+            else {
+                newPrice = Math.max(initialPrice - Math.abs(distanceX), 0);
+            }
+
+            priceEditText.setText(Float.toString(newPrice));
+            return true;
+        }
+
+        // fling - move activity to the background
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+            if (velocityX > 600 || velocityY > 600) {
+                moveTaskToBack(true);
+                return true;
+            }
+            return super.onFling(e1, e2, velocityX, velocityY);
+        }
+
+        // long press - clear all fields
+        @Override
+        public void onLongPress(MotionEvent e) {
+            clearAllEditTexts();
+            super.onLongPress(e);
         }
     }
 }

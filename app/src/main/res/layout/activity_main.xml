@@ -9,8 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:context=".MainActivity"
-        android:id="@+id/constraintLayoutId"
-        android:background="#CBB3E8">
+        android:id="@+id/constraintLayoutId">
 
         <EditText
             android:id="@+id/editMaker"
