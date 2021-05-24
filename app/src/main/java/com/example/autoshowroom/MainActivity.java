@@ -16,11 +16,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.icu.number.Scale;
 import android.os.Bundle;
 import android.view.GestureDetector;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
@@ -53,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     public final static String CAR_SP = "cars";
 
     GestureDetector gestureDetector;
+    ScaleGestureDetector scaleGestureDetector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,36 +84,14 @@ public class MainActivity extends AppCompatActivity {
 
         // set gesture detector listener
         gestureDetector = new GestureDetector(this, new MyGestureDetector());
+        scaleGestureDetector = new ScaleGestureDetector(this, new MyScaleGestureDetector());
 
         View constraintLayout = findViewById(R.id.constraintLayoutId);
         constraintLayout.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
                 gestureDetector.onTouchEvent(event);
-
-//                int action = event.getActionMasked();
-//                switch (action) {
-//                    case MotionEvent.ACTION_DOWN:
-//                        initialX = event.getX();
-//                        initialY = event.getY();
-//                        break;
-//                    case MotionEvent.ACTION_UP:
-//                        float currentX = event.getX();
-//                        float currentY = event.getY();
-//
-//                        // set a y threshold and determine direction of horizontal swiping
-//                        if (Math.abs(currentY - initialY) < 50 && initialX - currentX < 0) {
-//                            // gesture is from left to right, add new car
-//                            addNewCar();
-//                        }
-//                        // set an x threshold and determine the direction of vertical swiping
-//                        else if (Math.abs(currentX - initialX) < 50 && initialY - currentY < 0){
-//                            // gesture is from top to bottom, clear all fields
-//                            clearAllEditTexts();
-//                            Toast.makeText(context, "Fields cleared!", Toast.LENGTH_SHORT).show();;
-//                        }
-//                        break;
-//                }
+                scaleGestureDetector.onTouchEvent(event);
                 return true;
             }
         });
@@ -365,6 +346,36 @@ public class MainActivity extends AppCompatActivity {
         public void onLongPress(MotionEvent e) {
             clearAllEditTexts();
             super.onLongPress(e);
+        }
+    }
+
+    class MyScaleGestureDetector extends ScaleGestureDetector.SimpleOnScaleGestureListener {
+
+        @Override
+        public boolean onScaleBegin(ScaleGestureDetector detector) {
+            return true;
+        }
+
+        @Override
+        public boolean onScale(ScaleGestureDetector detector) {
+            int currentYear = Integer.parseInt(yearEditText.getText().toString());
+
+            float scaling = detector.getScaleFactor();
+
+            if (scaling < 1) {
+                currentYear --;
+                yearEditText.setText(Integer.toString(currentYear));
+            } else if (scaling > 1) {
+                currentYear ++;
+                yearEditText.setText(Integer.toString(currentYear));
+            }
+
+            return true;
+        }
+
+        @Override
+        public void onScaleEnd(ScaleGestureDetector detector) {
+            super.onScaleEnd(detector);
         }
     }
 }
