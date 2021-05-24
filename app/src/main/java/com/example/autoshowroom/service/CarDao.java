@@ -1,9 +1,12 @@
 package com.example.autoshowroom.service;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.RawQuery;
+import androidx.sqlite.db.SimpleSQLiteQuery;
 
 import java.util.List;
 
@@ -17,4 +20,7 @@ public interface CarDao {
 
     @Query("delete from cars")
     void deleteAll();
+
+    @RawQuery(observedEntities = Car.class)
+    LiveData<List<Car>> getCarsByFilters(SimpleSQLiteQuery filterQuery);
 }
